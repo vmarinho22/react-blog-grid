@@ -4,13 +4,15 @@ import { Component } from "react/cjs/react.production.min";
 import {loadPosts} from '../../utils/load-posts';
 import { Posts } from "../../components/Posts";
 import { Button } from "../../components/Button";
+import { TextInput } from "../../components/TextInput";
 
 export class Home extends Component {
   state = {
     posts: [],
     allPosts: [],
     page: 0,
-    postPerPage: 6
+    postPerPage: 6,
+    searchValue: "",
   };
 
   // Quando um componente é montado, ele chama essa função do React.
@@ -46,19 +48,57 @@ export class Home extends Component {
   // Quando um componente for desmontado, ele chama essa função do React.
   componentWillUnmount() {
   }
+
+  handleChange = (event) => {
+    const {value} = event.target;
+
+    this.setState({ searchValue: value });
+  }
+
   render() {
-    const { posts, page, postPerPage, allPosts } = this.state;
+    const { posts, page, postPerPage, allPosts, searchValue } = this.state;
     const noMorePosts = page + postPerPage >= allPosts.length;
+
+    const filteredPosts = !!searchValue? 
+      allPosts.filter(post => {
+        return post.title.toLowerCase().includes(searchValue.toLowerCase());
+      })
+    : posts;
+
+
     
     return (
       <section className="container">
-        <Posts posts={posts}/>
+        
+        <div className="search-container">
+         
+          <h1>Busca: {searchValue}</h1>
+          
+          <TextInput 
+            searchValue={searchValue}
+            handleChange={this.handleChange}
+          />
+                 {filteredPosts.length === 0 && (
+        <p>Nenhum post encontrado :c</p>
+       )}
+        </div>
+       
+       {filteredPosts.length > 0 && (
+        <Posts posts={filteredPosts}/>
+       )}
+       
+
+        
+
         <div className="button-container">
-          <Button 
+          {!searchValue && ( 
+            <Button 
             text="Ver mais artigos" 
             onClick={this.loadMorePosts}
             disabled={noMorePosts}
           />
+        )}
+          
         </div>
       </section>
     );

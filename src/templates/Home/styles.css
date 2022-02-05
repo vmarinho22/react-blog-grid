@@ -9,3 +9,12 @@
   align-items: flex-end;
   padding: 20px;
 }
+
+.search-container {
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.search-container h1 {
+  margin-bottom: 10px;
+}
